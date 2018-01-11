@@ -15,9 +15,12 @@ import java.io.IOException;
 public class Analisis {
     public static String analizarEmpleados(Context c) throws XmlPullParserException, IOException {
         StringBuilder cadena = new StringBuilder();
-        double suma = 0.0;
-        double sueldo = 0.0;
+        double suma = 0;
+        double edad = 0;
+        double sueldo = 0;
         int contador = 0;
+        double sueldoMin = Integer.MAX_VALUE;
+        double sueldoMax = Integer.MIN_VALUE;
         XmlResourceParser xrp = c.getResources().getXml(R.xml.empleados);
         int eventType = xrp.getEventType();
         while (eventType != XmlPullParser. END_DOCUMENT ) {
@@ -32,21 +35,32 @@ public class Analisis {
                     }
 
                     if (xrp.getName().equals("edad")) {
-                        cadena.append("Edad: " + xrp.nextText() + "\n");
+                        edad = Double.parseDouble(xrp.nextText());
+                        cadena.append("Edad: " + String.format("%.0f", edad) + "\n");
+                        suma += edad;
+                        contador++;
                     }
 
                     if (xrp.getName().equals("sueldo")) {
                         sueldo = Double.parseDouble(xrp.nextText());
-                        cadena.append("Nota: " + Double.toString(sueldo) + "\n\n");
-                        suma += sueldo;
-                        contador++;
+                        cadena.append("Sueldo: " + String.format("%.2f", sueldo)+ "\n\n");
+                        if (sueldo > sueldoMax){
+                            sueldoMax = sueldo;
+                        }
+                        if (sueldo < sueldoMin){
+                            sueldoMin = sueldo;
+                        }
+
                     }
 
                     break;
             }
             eventType = xrp.next();
         }
-        cadena.append("Media: "+ String.format("%.2f", suma/contador));
+        cadena.append("Media de edad: "+ String.format("%.2f", suma/contador) + "\n");
+        cadena.append("Sueldo máximo: " + String.format("%.2f", sueldoMax) + "\n");
+        cadena.append("Sueldo mínimo: " + String.format("%.2f", sueldoMin));
+
         return cadena.toString();
     }
 }
