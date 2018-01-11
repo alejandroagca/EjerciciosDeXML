@@ -14,54 +14,34 @@ import java.io.IOException;
 
 public class Analisis {
     public static String analizarEmpleados(Context c) throws XmlPullParserException, IOException {
-        boolean esNombre = false;
-        boolean esSueldo = false;
-        boolean esPuesto = false;
-        boolean esEdad = false;
         StringBuilder cadena = new StringBuilder();
-        Double suma = 0.0;
+        double suma = 0.0;
+        double sueldo = 0.0;
         int contador = 0;
         XmlResourceParser xrp = c.getResources().getXml(R.xml.empleados);
         int eventType = xrp.getEventType();
         while (eventType != XmlPullParser. END_DOCUMENT ) {
             switch (eventType) {
                 case XmlPullParser.START_TAG :
-                    if(xrp.getName().equals("nombre"))
-                        esNombre = true;
-                    /*else if(xrp.getName().equals("puesto")){
-                        esPuesto = true;
+                    if (xrp.getName().equals("nombre")) {
+                        cadena.append("Nombre: " + xrp.nextText() + "\n");
                     }
-                    else if(xrp.getName().equals("edad")){
-                        esEdad = true;
-                    }*/
-                    else if(xrp.getName().equals("sueldo")){
-                        esSueldo = true;
+
+                    if (xrp.getName().equals("puesto")) {
+                        cadena.append("Puesto: " + xrp.nextText() + "\n");
                     }
-                    break;
-                case XmlPullParser.TEXT :
-                    if(esNombre){
-                        cadena.append("Empleado: "+ xrp.getText());
+
+                    if (xrp.getName().equals("edad")) {
+                        cadena.append("Edad: " + xrp.nextText() + "\n");
                     }
-                    /*else if(esPuesto){
-                        cadena.append("Puesto: "+ xrp.getText() + "\n");
-                    }
-                    else if(esEdad){
-                        cadena.append("Edad: "+ xrp.getText() + "\n");
-                    }*/
-                    else if(esSueldo){
-                        cadena.append("Sueldo: "+xrp.getText()+"\n\n");
-                        suma += Double.parseDouble(xrp.getText());
+
+                    if (xrp.getName().equals("sueldo")) {
+                        sueldo = Double.parseDouble(xrp.nextText());
+                        cadena.append("Nota: " + Double.toString(sueldo) + "\n\n");
+                        suma += sueldo;
                         contador++;
                     }
-                    break;
-                case XmlPullParser.END_TAG :
-                    if (esNombre){
-                        esNombre = false;
-                        cadena.append("\n");
-                    }
-                    else if(esSueldo){
-                        esSueldo = false;
-                    }
+
                     break;
             }
             eventType = xrp.next();
