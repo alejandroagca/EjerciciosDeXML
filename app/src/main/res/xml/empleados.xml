@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<empleados>
+    <empleado>
+        <nombre>Alejandro Aguilar</nombre>
+        <puesto>Jefe</puesto>
+        <edad>22</edad>
+        <sueldo>2000</sueldo>
+    </empleado>
+    <empleado>
+        <nombre>Nicolas Hernandez</nombre>
+        <puesto>Encargado</puesto>
+        <edad>25</edad>
+        <sueldo>1500</sueldo>
+    </empleado>
+    <empleado>
+        <nombre>Nora Merchan</nombre>
+        <puesto>Trabajadora</puesto>
+        <edad>21</edad>
+        <sueldo>1200</sueldo>
+    </empleado>
+</empleados>
