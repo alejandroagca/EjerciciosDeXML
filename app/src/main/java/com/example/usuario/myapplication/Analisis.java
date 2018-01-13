@@ -2,10 +2,13 @@ package com.example.usuario.myapplication;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
+import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 /**
@@ -62,5 +65,55 @@ public class Analisis {
         cadena.append("Sueldo mínimo: " + String.format("%.2f", sueldoMin));
 
         return cadena.toString();
+    }
+
+    public static String analizarAEMET(File file) throws NullPointerException, XmlPullParserException,
+            IOException {
+        boolean dentroTemperatura = false;
+        boolean dentroMaxima = false;
+        boolean dentroMinima = false;
+        StringBuilder builder = new StringBuilder();
+        XmlPullParser xpp = Xml.newPullParser();
+        xpp.setInput(new FileReader(file));
+        int eventType = xpp.getEventType();
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            switch (eventType) {
+                case XmlPullParser.START_TAG:
+                    if (xpp.getText().equalsIgnoreCase("temperatura")) {
+                        dentroTemperatura = true;
+                    }
+                    if (dentroTemperatura && xpp.getName().equalsIgnoreCase("maxima")) {
+                        dentroMaxima = true;
+                    }
+                    if (dentroTemperatura && xpp.getName().equalsIgnoreCase("minima")) {
+                        dentroMinima = true;
+                    }
+                    break;
+
+                case XmlPullParser.TEXT:
+                    if (dentroMaxima) {
+                        builder.append(xpp.getText() + "\n");
+                    }
+                    if (dentroMinima){
+                        builder.append(xpp.getText() + "\n");
+                    }
+                    break;
+
+                case XmlPullParser.END_TAG:
+                    if (xpp.getText().equalsIgnoreCase("temperatura")) {
+                        dentroTemperatura = false;
+                    }
+                    if (dentroTemperatura && xpp.getName().equalsIgnoreCase("maxima")) {
+                        dentroMaxima = false;
+                    }
+                    if (dentroTemperatura && xpp.getName().equalsIgnoreCase("minima")) {
+                        dentroMinima = false;
+                    }
+                    break;
+
+            }
+            eventType = xpp.next();
+        }
+        return builder.toString();
     }
 }
