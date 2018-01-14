@@ -16,6 +16,11 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -23,14 +28,24 @@ public class AEMETActivity extends AppCompatActivity {
 
     public static final String ENLACE = "http://www.aemet.es/xml/municipios/localidad_29067.xml";
     public static final String FICHERO = "aemet.xml";
-    TextView txvTmpMaxima;
-    TextView txvTmpMinima;
+    TextView txvTmpMHoy;
+    TextView txvTmpManana;
+    String fechaHoy;
+    Date hoy;
+    String fechaManana;
+    Calendar manana;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aemet);
-        txvTmpMaxima = (TextView) findViewById(R.id.txvTmpMaxima);
-        txvTmpMinima = (TextView)findViewById(R.id.txvTmpMinima);
+        txvTmpMHoy = (TextView) findViewById(R.id.txvTmpHoy);
+        txvTmpManana = (TextView)findViewById(R.id.txvTmpManana);
+        manana = Calendar.getInstance();
+        hoy = new Date();
+        manana.add(Calendar.DATE, Integer.valueOf(1));
+        fechaHoy = fechaACadena(hoy);
+        fechaManana = fechaACadena(manana.getTime());
+
         descarga(ENLACE, FICHERO);
 
     }
@@ -72,35 +87,57 @@ public class AEMETActivity extends AppCompatActivity {
     public void analizarAEMET(File file) throws NullPointerException, XmlPullParserException, IOException {
         boolean dentroHoy = false;
         boolean dentroManana = false;
-        boolean dentroTemperatura = false;
-        boolean dentroMaxima = false;
-        boolean dentroMinima = false;
+        boolean dentroTemperaturaHoy = false;
+        boolean dentroMaximaHoy = false;
+        boolean dentroMinimaHoy = false;
+        boolean dentroTemperaturaManana = false;
+        boolean dentroMaximaManana = false;
+        boolean dentroMinimaManana = false;
         XmlPullParser xpp = Xml.newPullParser();
         xpp.setInput(new FileReader(file));
         int eventType = xpp.getEventType();
         while (eventType != XmlPullParser.END_DOCUMENT) {
             switch (eventType) {
                 case XmlPullParser.START_TAG:
-                    if (xpp.getName().equals("dia") && xpp.getAttributeValue(null, "fecha").equals("2018-01-14")){
+                    if (xpp.getName().equals("dia") && xpp.getAttributeValue(null, "fecha").equals(fechaHoy)){
                         dentroHoy = true;
                     }
                     if (dentroHoy && xpp.getName().equals("temperatura")) {
-                        dentroTemperatura = true;
+                        dentroTemperaturaHoy = true;
                     }
-                    if (dentroTemperatura && xpp.getName().equals("maxima")) {
-                        dentroMaxima = true;
+                    if (dentroTemperaturaHoy && xpp.getName().equals("maxima")) {
+                        dentroMaximaHoy = true;
                     }
-                    if (dentroTemperatura && xpp.getName().equals("minima")) {
-                        dentroMinima = true;
+                    if (dentroTemperaturaHoy && xpp.getName().equals("minima")) {
+                        dentroMinimaHoy = true;
+                    }
+                    if (xpp.getName().equals("dia") && xpp.getAttributeValue(null, "fecha").equals(fechaManana)){
+                        dentroManana = true;
+                    }
+                    if (dentroManana && xpp.getName().equals("temperatura")) {
+                        dentroTemperaturaManana = true;
+                    }
+                    if (dentroTemperaturaManana && xpp.getName().equals("maxima")) {
+                        dentroMaximaManana = true;
+                    }
+                    if (dentroTemperaturaManana && xpp.getName().equals("minima")) {
+                        dentroMinimaManana = true;
                     }
                     break;
 
                 case XmlPullParser.TEXT:
-                    if (dentroMaxima) {
-                         txvTmpMaxima.setText(xpp.getText());
+                    if (dentroMaximaHoy) {
+                         txvTmpMHoy.setText(xpp.getText() + " / ");
                     }
-                    if (dentroMinima){
-                        txvTmpMinima.setText(xpp.getText());
+                    if (dentroMinimaHoy){
+                        txvTmpMHoy.setText(txvTmpMHoy.getText() + xpp.getText());
+                    }
+
+                    if (dentroMaximaManana) {
+                        txvTmpManana.setText(xpp.getText() + " / ");
+                    }
+                    if (dentroMinimaManana){
+                        txvTmpManana.setText(txvTmpManana.getText() + xpp.getText());
                     }
                     break;
 
@@ -109,13 +146,22 @@ public class AEMETActivity extends AppCompatActivity {
                         dentroHoy = false;
                     }
                     if (dentroHoy && xpp.getName().equals("temperatura")) {
-                        dentroTemperatura = false;
+                        dentroTemperaturaHoy = false;
                     }
-                    if (dentroTemperatura && xpp.getName().equals("maxima")) {
-                        dentroMaxima = false;
+                    if (dentroTemperaturaHoy && xpp.getName().equals("maxima")) {
+                        dentroMaximaHoy = false;
                     }
-                    if (dentroTemperatura && xpp.getName().equals("minima")) {
-                        dentroMinima = false;
+                    if (dentroTemperaturaHoy && xpp.getName().equals("minima")) {
+                        dentroMinimaHoy = false;
+                    }
+                    if (dentroManana && xpp.getName().equals("temperatura")) {
+                        dentroTemperaturaManana = false;
+                    }
+                    if (dentroTemperaturaManana && xpp.getName().equals("maxima")) {
+                        dentroMaximaManana = false;
+                    }
+                    if (dentroTemperaturaManana && xpp.getName().equals("minima")) {
+                        dentroMinimaManana = false;
                     }
                     break;
 
@@ -123,5 +169,11 @@ public class AEMETActivity extends AppCompatActivity {
             eventType = xpp.next();
 
         }
+    }
+
+    private String fechaACadena(Date d) {
+        //pasar una fecha a un string
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return df.format(d);
     }
 }
