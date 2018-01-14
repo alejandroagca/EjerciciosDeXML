@@ -83,6 +83,7 @@ public class AEMETActivity extends AppCompatActivity {
 
         escribirDias();
         escribirTramoHorario();
+
         descarga(ENLACE, FICHERO);
     }
     private void escribirTramoHorario(){
@@ -193,15 +194,19 @@ public class AEMETActivity extends AppCompatActivity {
                     if (xpp.getName().equals("dia") && xpp.getAttributeValue(null, "fecha").equals(fechaHoy)){
                         dentroHoy = true;
                     }
+
                     if (dentroHoy && xpp.getName().equals("temperatura")) {
                         dentroTemperaturaHoy = true;
                     }
+
                     if (dentroTemperaturaHoy && xpp.getName().equals("maxima")) {
                         dentroMaximaHoy = true;
                     }
+
                     if (dentroTemperaturaHoy && xpp.getName().equals("minima")) {
                         dentroMinimaHoy = true;
                     }
+
                     if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("00-06") && hora >= 0 && hora <6){
                         dentroEstadoDiaHoyPrimerTramo = true;
                     }
@@ -257,58 +262,58 @@ public class AEMETActivity extends AppCompatActivity {
                     }
                     if (dentroEstadoDiaHoyPrimerTramo) {
                         if (xpp.getText().equals("11n")) {
-                            imgPrimerTramoMan.setImageResource(R.drawable.luna);
+                            imgPrimerTramoHoy.setImageResource(R.drawable.luna);
                         }
                         if (xpp.getText().equals("12n") || xpp.getText().equals("13n")) {
-                            imgPrimerTramoMan.setImageResource(R.drawable.nublado);
+                            imgPrimerTramoHoy.setImageResource(R.drawable.nublado);
                         }
                         if (xpp.getText().equals("17n")) {
-                            imgPrimerTramoMan.setImageResource(R.drawable.nublado);
+                            imgPrimerTramoHoy.setImageResource(R.drawable.nublado);
                         }
                         if (xpp.getText().equals("24n")) {
-                            imgPrimerTramoMan.setImageResource(R.drawable.lluvioso);
+                            imgPrimerTramoHoy.setImageResource(R.drawable.lluvioso);
                         }
                     }
                     if (dentroEstadoDiaHoySegundoTramo) {
                         if (xpp.getText().equals("11")) {
-                            imgSegundoTramoMan.setImageResource(R.drawable.despejado);
+                            imgSegundoTramoHoy.setImageResource(R.drawable.despejado);
                         }
                         if (xpp.getText().equals("12") || xpp.getText().equals("13")) {
-                            imgSegundoTramoMan.setImageResource(R.drawable.nublado);
+                            imgSegundoTramoHoy.setImageResource(R.drawable.nublado);
                         }
                         if (xpp.getText().equals("17")) {
-                            imgSegundoTramoMan.setImageResource(R.drawable.nublado);
+                            imgSegundoTramoHoy.setImageResource(R.drawable.nublado);
                         }
                         if (xpp.getText().equals("24")) {
-                            imgSegundoTramoMan.setImageResource(R.drawable.lluvioso);
+                            imgSegundoTramoHoy.setImageResource(R.drawable.lluvioso);
                         }
                     }
                     if (dentroEstadoDiaHoyTercerTramo) {
                         if (xpp.getText().equals("11")) {
-                            imgTercerTramoMan.setImageResource(R.drawable.despejado);
+                            imgTercerTramoHoy.setImageResource(R.drawable.despejado);
                         }
                         if (xpp.getText().equals("12") || xpp.getText().equals("13")) {
-                            imgTercerTramoMan.setImageResource(R.drawable.nublado);
+                            imgTercerTramoHoy.setImageResource(R.drawable.nublado);
                         }
                         if (xpp.getText().equals("17")) {
-                            imgTercerTramoMan.setImageResource(R.drawable.nublado);
+                            imgTercerTramoHoy.setImageResource(R.drawable.nublado);
                         }
                         if (xpp.getText().equals("24")) {
-                            imgTercerTramoMan.setImageResource(R.drawable.lluvioso);
+                            imgTercerTramoHoy.setImageResource(R.drawable.lluvioso);
                         }
                     }
                     if (dentroEstadoDiaHoyCuartoTramo) {
                         if (xpp.getText().equals("11n")) {
-                            imgCuartoTramoMan.setImageResource(R.drawable.luna);
+                            imgCuartoTramoHoy.setImageResource(R.drawable.luna);
                         }
                         if (xpp.getText().equals("12n") || xpp.getText().equals("13n")) {
-                            imgCuartoTramoMan.setImageResource(R.drawable.nublado);
+                            imgCuartoTramoHoy.setImageResource(R.drawable.nublado);
                         }
                         if (xpp.getText().equals("17n")) {
-                            imgCuartoTramoMan.setImageResource(R.drawable.nublado);
+                            imgCuartoTramoHoy.setImageResource(R.drawable.nublado);
                         }
                         if (xpp.getText().equals("24n")) {
-                            imgCuartoTramoMan.setImageResource(R.drawable.lluvioso);
+                            imgCuartoTramoHoy.setImageResource(R.drawable.lluvioso);
                         }
                     }
 
