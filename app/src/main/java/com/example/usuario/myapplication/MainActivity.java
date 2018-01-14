@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(i);
         }
 
-        /*if (v == btnEjercicio2){
-            i = new Intent(this, Ejercicio2Activity.class);
+        if (v == btnEjercicio2){
+            i = new Intent(this, AEMETActivity.class);
             startActivity(i);
         }
 
-        if (v == btnEjercicio3){
+        /*if (v == btnEjercicio3){
             i = new Intent(this, Ejercicio3Activity.class);
             startActivity(i);
         }
