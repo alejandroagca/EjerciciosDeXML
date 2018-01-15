@@ -13,7 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.usuario.myapplication.descargas.DownloadTask;
+import com.example.usuario.myapplication.network.DownloadTask;
 import com.example.usuario.myapplication.pojo.FailureEvent;
 import com.example.usuario.myapplication.pojo.MessageEvent;
 import com.example.usuario.myapplication.pojo.Noticia;
@@ -32,13 +32,13 @@ import java.util.ArrayList;
 
 public class NoticiasRSSActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
-    public static final String CANAL = "http://ep00.epimg.net/rss/elpais/portada.xml";
+    public static final String PERIODICO = "http://ep00.epimg.net/rss/elpais/portada.xml";
     public static final String TEMPORAL = "elpais.xml";
     ListView ltvLista;
     ArrayList<Noticia> arlListaNoticias;
     ArrayAdapter<Noticia> aryAdapter;
     FloatingActionButton fabUpdateNews;
-    ProgressDialog progreso;
+    ProgressDialog pgdProgreso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +47,20 @@ public class NoticiasRSSActivity extends AppCompatActivity implements View.OnCli
         ltvLista = (ListView) findViewById(R.id.listView);
         ltvLista.setOnItemClickListener(this);
         fabUpdateNews = (FloatingActionButton) findViewById(R.id.fab_updateNews);
-        fabUpdateNews = (FloatingActionButton) findViewById(R.id.fab_updateNews);
         fabUpdateNews.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         if (v == fabUpdateNews)
-            descarga(CANAL, TEMPORAL);
+            descarga(PERIODICO, TEMPORAL);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onMessageEvent(MessageEvent event) {
         Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show();
         try {
-            progreso.dismiss();
+            pgdProgreso.dismiss();
             arlListaNoticias = analizarNoticias(event.file);
             mostrar();
         } catch (Exception e) {
@@ -72,20 +71,18 @@ public class NoticiasRSSActivity extends AppCompatActivity implements View.OnCli
 
     @Subscribe
     public void handleFailure(FailureEvent event) {
-        progreso.dismiss();
+        pgdProgreso.dismiss();
         Toast.makeText(this, "Algo ha salido mal... :(\n" + "mensaje: " + event.message + "\nstatus: " + event.status,Toast.LENGTH_SHORT).show();
 
     }
 
-    private void descarga(String canal, String temporal) {
-        progreso = new ProgressDialog(this);
-
-        progreso.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progreso.setMessage("Descargando . . .");
-        progreso.setCancelable(false);
-        progreso.show();
-
-        DownloadTask.executeDownload(this, canal, temporal);
+    private void descarga(String periodico, String temporal) {
+        pgdProgreso = new ProgressDialog(this);
+        pgdProgreso.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pgdProgreso.setMessage("Descargando . . .");
+        pgdProgreso.setCancelable(false);
+        pgdProgreso.show();
+        DownloadTask.executeDownload(this, periodico, temporal);
     }
 
     private void mostrar() {

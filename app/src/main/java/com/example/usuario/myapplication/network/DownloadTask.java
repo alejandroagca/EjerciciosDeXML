@@ -1,4 +1,4 @@
-package com.example.usuario.myapplication.descargas;
+package com.example.usuario.myapplication.network;
 
 /**
  * Created by usuario on 15/01/18.
@@ -21,7 +21,6 @@ public class DownloadTask {
 
     public static void executeDownload(Context context, String canal, String temporal) {
         File miFichero = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), temporal);
-        //RestClient.get(canal, new FileAsyncHttpResponseHandler(miFichero) {
         RestClient.get(canal, new FileAsyncHttpResponseHandler(context) {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
