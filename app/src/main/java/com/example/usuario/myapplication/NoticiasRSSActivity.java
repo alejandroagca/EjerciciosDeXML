@@ -32,36 +32,37 @@ import java.util.ArrayList;
 
 public class NoticiasRSSActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
-    public static final String PERIODICO = "http://ep00.epimg.net/rss/elpais/portada.xml";
-    public static final String TEMPORAL = "elpais.xml";
-    ListView ltvLista;
-    ArrayList<Noticia> arlListaNoticias;
-    ArrayAdapter<Noticia> aryAdapter;
-    FloatingActionButton fabUpdateNews;
-    ProgressDialog pgdProgreso;
+    public static final String CANAL = "http://www.europapress.es/rss/rss.aspx?ch=279";
+    public static final String TEMPORAL = "europapress.xml";
+    ListView lista;
+    ArrayList<Noticia> listaNoticias;
+    ArrayAdapter<Noticia> adapter;
+    FloatingActionButton fab_updateNews;
+    ProgressDialog progreso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_noticias_rss);
-        ltvLista = (ListView) findViewById(R.id.listView);
-        ltvLista.setOnItemClickListener(this);
-        fabUpdateNews = (FloatingActionButton) findViewById(R.id.fab_updateNews);
-        fabUpdateNews.setOnClickListener(this);
+        lista = (ListView) findViewById(R.id.listView);
+        lista.setOnItemClickListener(this);
+        fab_updateNews = (FloatingActionButton) findViewById(R.id.fab_updateNews);
+        fab_updateNews.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (v == fabUpdateNews)
-            descarga(PERIODICO, TEMPORAL);
+        if (v == fab_updateNews)
+            descarga(CANAL, TEMPORAL);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onMessageEvent(MessageEvent event) {
+        //Toast.makeText(getActivity(), event.message, Toast.LENGTH_SHORT).show();
         Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show();
         try {
-            pgdProgreso.dismiss();
-            arlListaNoticias = analizarNoticias(event.file);
+            progreso.dismiss();
+            listaNoticias = analizarNoticias(event.file);
             mostrar();
         } catch (Exception e) {
             Toast.makeText(this, "¡Error! :(", Toast.LENGTH_SHORT).show();
@@ -69,50 +70,57 @@ public class NoticiasRSSActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    // This method will be called when a SomeOtherEvent is posted
     @Subscribe
     public void handleFailure(FailureEvent event) {
-        pgdProgreso.dismiss();
+        //doSomethingWith(event);
+        progreso.dismiss();
         Toast.makeText(this, "Algo ha salido mal... :(\n" + "mensaje: " + event.message + "\nstatus: " + event.status,Toast.LENGTH_SHORT).show();
 
     }
 
-    private void descarga(String periodico, String temporal) {
-        pgdProgreso = new ProgressDialog(this);
-        pgdProgreso.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pgdProgreso.setMessage("Descargando . . .");
-        pgdProgreso.setCancelable(false);
-        pgdProgreso.show();
-        DownloadTask.executeDownload(this, periodico, temporal);
+    private void descarga(String canal, String temporal) {
+        progreso = new ProgressDialog(this);
+
+        progreso.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progreso.setMessage("Descargando . . .");
+        progreso.setCancelable(false);
+        progreso.show();
+
+        DownloadTask.executeDownload(this, canal, temporal);
     }
 
     private void mostrar() {
-        if (arlListaNoticias != null)
-            if (aryAdapter == null) {
-                aryAdapter = new ArrayAdapter<Noticia>(this, android.R.layout.simple_list_item_1, arlListaNoticias);
-                ltvLista.setAdapter(aryAdapter);
+        if (listaNoticias != null)
+            if (adapter == null) {
+                adapter = new ArrayAdapter<Noticia>(this, android.R.layout.simple_list_item_1, listaNoticias);
+                lista.setAdapter(adapter);
             }
             else {
-                aryAdapter.clear();
-                aryAdapter.addAll(arlListaNoticias);
+                adapter.clear();
+                adapter.addAll(listaNoticias);
             }
         else
-            Toast.makeText(getApplicationContext(), "Error al crear la ltvLista", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error al crear la lista", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Uri uri = Uri.parse((String) arlListaNoticias.get(position).getLink());
+        Uri uri = Uri.parse((String) listaNoticias.get(position).getLink());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         if (intent.resolveActivity(getPackageManager()) != null)
             startActivity(intent);
         else
             Toast.makeText(getApplicationContext(), "No hay un navegador", Toast.LENGTH_SHORT).show();
     }
+
+
     @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
     }
+
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
