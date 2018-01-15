@@ -3,7 +3,6 @@ package com.example.usuario.myapplication;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Xml;
@@ -47,30 +46,6 @@ public class NoticiasRSSActivity extends AppCompatActivity implements AdapterVie
         lista.setOnItemClickListener(this);
         canal = getIntent().getExtras().getString("direccion");
         descarga(canal, TEMPORAL);
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onMessageEvent(MessageEvent event) {
-        //Toast.makeText(getActivity(), event.message, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show();
-        try {
-            progreso.dismiss();
-            listaNoticias = analizarNoticias(event.file);
-            mostrar();
-        } catch (Exception e) {
-            Toast.makeText(this, "¡Error! :(", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    // This method will be called when a SomeOtherEvent is posted
-    @Subscribe
-    public void handleFailure(FailureEvent event) {
-        //doSomethingWith(event);
-        progreso.dismiss();
-        Toast.makeText(this, "Algo ha salido mal... :(\n" + "mensaje: " + event.message + "\nstatus: " + event.status,Toast.LENGTH_SHORT).show();
-
     }
 
     private void descarga(String canal, String temporal) {
@@ -82,6 +57,36 @@ public class NoticiasRSSActivity extends AppCompatActivity implements AdapterVie
         progreso.show();
 
         DownloadTask.executeDownload(this, canal, temporal);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Uri uri = Uri.parse((String) listaNoticias.get(position).getLink());
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getPackageManager()) != null)
+            startActivity(intent);
+        else
+            Toast.makeText(getApplicationContext(), "No hay un navegador", Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onMessageEvent(MessageEvent event) {
+        Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show();
+        try {
+            progreso.dismiss();
+            listaNoticias = analizarNoticias(event.file);
+            mostrar();
+        } catch (Exception e) {
+            Toast.makeText(this, "¡Error! :(", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Subscribe
+    public void handleFailure(FailureEvent event) {
+        progreso.dismiss();
+        Toast.makeText(this, "Algo ha salido mal... :(\n" + "mensaje: " + event.message + "\nstatus: " + event.status,Toast.LENGTH_SHORT).show();
+
     }
 
     private void mostrar() {
@@ -97,17 +102,6 @@ public class NoticiasRSSActivity extends AppCompatActivity implements AdapterVie
         else
             Toast.makeText(getApplicationContext(), "Error al crear la lista", Toast.LENGTH_SHORT).show();
     }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Uri uri = Uri.parse((String) listaNoticias.get(position).getLink());
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        if (intent.resolveActivity(getPackageManager()) != null)
-            startActivity(intent);
-        else
-            Toast.makeText(getApplicationContext(), "No hay un navegador", Toast.LENGTH_SHORT).show();
-    }
-
 
     @Override
     public void onStart() {
