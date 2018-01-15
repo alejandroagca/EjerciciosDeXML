@@ -172,20 +172,13 @@ public class AEMETActivity extends AppCompatActivity {
     private void analizarAEMET(File file) throws NullPointerException, XmlPullParserException, IOException {
         boolean dentroHoy = false;
         boolean dentroManana = false;
-        boolean dentroTemperaturaHoy = false;
-        boolean dentroMaximaHoy = false;
-        boolean dentroMinimaHoy = false;
-        boolean dentroTemperaturaManana = false;
-        boolean dentroMaximaManana = false;
-        boolean dentroMinimaManana = false;
-        boolean dentroEstadoDiaHoyPrimerTramo = false;
-        boolean dentroEstadoDiaHoySegundoTramo = false;
-        boolean dentroEstadoDiaHoyTercerTramo = false;
-        boolean dentroEstadoDiaHoyCuartoTramo = false;
-        boolean dentroEstadoDiaMananaPrimerTramo = false;
-        boolean dentroEstadoDiaMananaSegundoTramo = false;
-        boolean dentroEstadoDiaMananaTercerTramo = false;
-        boolean dentroEstadoDiaMananaCuartoTramo = false;
+        boolean dentroTemperatura = false;
+        boolean dentroMaxima = false;
+        boolean dentroMinima = false;
+        boolean dentroEstadoDiaPrimerTramo = false;
+        boolean dentroEstadoDiaSegundoTramo = false;
+        boolean dentroEstadoDiaTercerTramo = false;
+        boolean dentroEstadoDiaCuartoTramo = false;
         XmlPullParser xpp = Xml.newPullParser();
         xpp.setInput(new FileReader(file));
         int eventType = xpp.getEventType();
@@ -195,80 +188,97 @@ public class AEMETActivity extends AppCompatActivity {
                     if (xpp.getName().equals("dia") && xpp.getAttributeValue(null, "fecha").equals(fechaHoy)){
                         dentroHoy = true;
                     }
-
-                    if (dentroHoy && xpp.getName().equals("temperatura")) {
-                        dentroTemperaturaHoy = true;
-                    }
-
-                    if (dentroTemperaturaHoy && xpp.getName().equals("maxima")) {
-                        dentroMaximaHoy = true;
-                    }
-
-                    if (dentroTemperaturaHoy && xpp.getName().equals("minima")) {
-                        dentroMinimaHoy = true;
-                    }
-
-                    if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("00-06") && hora < 6){
-                        dentroEstadoDiaHoyPrimerTramo = true;
-                        dentroEstadoDiaHoySegundoTramo = true;
-                        dentroEstadoDiaHoyTercerTramo = true;
-                        dentroEstadoDiaHoyCuartoTramo = true;
-                    }
-                    else if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("06-12") && hora < 12){
-                        dentroEstadoDiaHoySegundoTramo = true;
-                        dentroEstadoDiaHoyTercerTramo = true;
-                        dentroEstadoDiaHoyCuartoTramo = true;
-
-                    }
-                    else if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("12-18") && hora < 18){
-                        dentroEstadoDiaHoyTercerTramo = true;
-                        dentroEstadoDiaHoyCuartoTramo = true;
-                    }
-                    else if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("18-24") && hora < 24){
-                        dentroEstadoDiaHoyCuartoTramo = true;
-                    }
-
                     if (xpp.getName().equals("dia") && xpp.getAttributeValue(null, "fecha").equals(fechaManana)){
                         dentroManana = true;
                     }
+
+                    if ((dentroHoy || dentroManana) && xpp.getName().equals("temperatura")) {
+                        dentroTemperatura = true;
+                    }
+
+                    if (dentroTemperatura && xpp.getName().equals("maxima")) {
+                        dentroMaxima = true;
+                    }
+
+                    if (dentroTemperatura && xpp.getName().equals("minima")) {
+                        dentroMinima = true;
+                    }
+
+                    if (hora < 6){
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("00-06")){
+                            dentroEstadoDiaPrimerTramo = true;
+                    }
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("06-12")){
+                            dentroEstadoDiaSegundoTramo = true;
+                        }
+
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("12-18")){
+                            dentroEstadoDiaTercerTramo = true;
+                        }
+                         if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("18-24")){
+                            dentroEstadoDiaCuartoTramo = true;
+                        }
+                    }
+
+                    if (hora < 12 && hora >= 6){
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("06-12")){
+                            dentroEstadoDiaSegundoTramo = true;
+                        }
+
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("12-18")){
+                            dentroEstadoDiaTercerTramo = true;
+                        }
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("18-24")){
+                            dentroEstadoDiaCuartoTramo = true;
+                        }
+                    }
+
+                    if (hora < 18 && hora >= 12){
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("12-18")){
+                            dentroEstadoDiaTercerTramo = true;
+                        }
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("18-24")){
+                            dentroEstadoDiaCuartoTramo = true;
+                        }
+                    }
+
+                    if (hora >= 18){
+                        if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("18-24")){
+                            dentroEstadoDiaCuartoTramo = true;
+                        }
+                    }
+
+
                     if (dentroManana && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("00-06")){
-                        dentroEstadoDiaMananaPrimerTramo = true;
+                        dentroEstadoDiaPrimerTramo = true;
                     }
                     if (dentroManana && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("06-12")){
-                        dentroEstadoDiaMananaSegundoTramo = true;
+                        dentroEstadoDiaSegundoTramo = true;
                     }
                     if (dentroManana && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("12-18")){
-                        dentroEstadoDiaMananaTercerTramo = true;
+                        dentroEstadoDiaTercerTramo = true;
                     }
                     if (dentroManana && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("18-24")){
-                        dentroEstadoDiaMananaCuartoTramo = true;
-                    }
-                    if (dentroManana && xpp.getName().equals("temperatura")) {
-                        dentroTemperaturaManana = true;
-                    }
-                    if (dentroTemperaturaManana && xpp.getName().equals("maxima")) {
-                        dentroMaximaManana = true;
-                    }
-                    if (dentroTemperaturaManana && xpp.getName().equals("minima")) {
-                        dentroMinimaManana = true;
+                        dentroEstadoDiaCuartoTramo = true;
                     }
                     break;
 
                 case XmlPullParser.TEXT:
-                    if (dentroMaximaHoy) {
+                    if (dentroMaxima && dentroHoy) {
                          txvTmpHoy.setText(xpp.getText());
                     }
-                    if (dentroMinimaHoy){
+                    if (dentroMaxima && dentroManana){
+                        txvTmpManana.setText(xpp.getText());
+                    }
+                    if (dentroMinima && dentroHoy){
                         txvTmpHoy.setText(xpp.getText() + " / " + txvTmpHoy.getText());
                     }
 
-                    if (dentroMaximaManana) {
-                        txvTmpManana.setText(xpp.getText());
-                    }
-                    if (dentroMinimaManana){
+                    if (dentroMinima && dentroManana){
                         txvTmpManana.setText(xpp.getText() + " / " + txvTmpManana.getText());
                     }
-                    if (dentroEstadoDiaHoyPrimerTramo) {
+
+                    if (dentroEstadoDiaPrimerTramo && dentroHoy) {
                         if (xpp.getText().equals("11n")) {
                             imgPrimerTramoHoy.setImageResource(R.drawable.luna);
                         }
@@ -286,7 +296,7 @@ public class AEMETActivity extends AppCompatActivity {
                             imgPrimerTramoHoy.setImageResource(R.drawable.error);
                         }
                     }
-                    if (dentroEstadoDiaHoySegundoTramo) {
+                    if (dentroEstadoDiaSegundoTramo && dentroHoy) {
                         if (xpp.getText().equals("11")) {
                             imgSegundoTramoHoy.setImageResource(R.drawable.despejado);
                         }
@@ -303,7 +313,7 @@ public class AEMETActivity extends AppCompatActivity {
                             imgSegundoTramoHoy.setImageResource(R.drawable.error);
                         }
                     }
-                    if (dentroEstadoDiaHoyTercerTramo) {
+                    if (dentroEstadoDiaTercerTramo && dentroHoy) {
                          if (xpp.getText().equals("11")) {
                             imgTercerTramoHoy.setImageResource(R.drawable.despejado);
                         }
@@ -320,7 +330,7 @@ public class AEMETActivity extends AppCompatActivity {
                              imgTercerTramoHoy.setImageResource(R.drawable.error);
                          }
                     }
-                    if (dentroEstadoDiaHoyCuartoTramo) {
+                    if (dentroEstadoDiaCuartoTramo && dentroHoy) {
                         if (xpp.getText().equals("11n")) {
                             imgCuartoTramoHoy.setImageResource(R.drawable.luna);
                         }
@@ -338,7 +348,7 @@ public class AEMETActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (dentroEstadoDiaMananaPrimerTramo) {
+                    if (dentroEstadoDiaPrimerTramo && dentroManana) {
                         if (xpp.getText().equals("11n")) {
                             imgPrimerTramoMan.setImageResource(R.drawable.luna);
                         }
@@ -355,7 +365,7 @@ public class AEMETActivity extends AppCompatActivity {
                             imgPrimerTramoMan.setImageResource(R.drawable.error);
                         }
                     }
-                    if (dentroEstadoDiaMananaSegundoTramo) {
+                    if (dentroEstadoDiaSegundoTramo && dentroManana) {
                         if (xpp.getText().equals("11")) {
                             imgSegundoTramoMan.setImageResource(R.drawable.despejado);
                         }
@@ -372,7 +382,7 @@ public class AEMETActivity extends AppCompatActivity {
                             imgSegundoTramoMan.setImageResource(R.drawable.error);
                         }
                     }
-                    if (dentroEstadoDiaMananaTercerTramo) {
+                    if (dentroEstadoDiaTercerTramo && dentroManana) {
                         if (xpp.getText().equals("11")) {
                             imgTercerTramoMan.setImageResource(R.drawable.despejado);
                         }
@@ -389,7 +399,7 @@ public class AEMETActivity extends AppCompatActivity {
                             imgTercerTramoMan.setImageResource(R.drawable.error);
                         }
                     }
-                    if (dentroEstadoDiaMananaCuartoTramo) {
+                    if (dentroEstadoDiaCuartoTramo && dentroManana) {
                         if (xpp.getText().equals("11n")) {
                             imgCuartoTramoMan.setImageResource(R.drawable.luna);
                         }
@@ -414,32 +424,19 @@ public class AEMETActivity extends AppCompatActivity {
                         dentroManana = false;
                     }
                     if (xpp.getName().equals("estado_cielo")){
-                        dentroEstadoDiaHoyPrimerTramo = false;
-                        dentroEstadoDiaHoySegundoTramo = false;
-                        dentroEstadoDiaHoyTercerTramo = false;
-                        dentroEstadoDiaHoyCuartoTramo = false;
-                        dentroEstadoDiaMananaPrimerTramo = false;
-                        dentroEstadoDiaMananaSegundoTramo = false;
-                        dentroEstadoDiaMananaTercerTramo = false;
-                        dentroEstadoDiaMananaCuartoTramo = false;
+                        dentroEstadoDiaPrimerTramo = false;
+                        dentroEstadoDiaSegundoTramo = false;
+                        dentroEstadoDiaTercerTramo = false;
+                        dentroEstadoDiaCuartoTramo = false;
                     }
-                    if (dentroHoy && xpp.getName().equals("temperatura")) {
-                        dentroTemperaturaHoy = false;
+                    if (xpp.getName().equals("temperatura")) {
+                        dentroTemperatura = false;
                     }
-                    if (dentroTemperaturaHoy && xpp.getName().equals("maxima")) {
-                        dentroMaximaHoy = false;
+                    if (xpp.getName().equals("maxima")) {
+                        dentroMaxima = false;
                     }
-                    if (dentroTemperaturaHoy && xpp.getName().equals("minima")) {
-                        dentroMinimaHoy = false;
-                    }
-                    if (dentroManana && xpp.getName().equals("temperatura")) {
-                        dentroTemperaturaManana = false;
-                    }
-                    if (dentroTemperaturaManana && xpp.getName().equals("maxima")) {
-                        dentroMaximaManana = false;
-                    }
-                    if (dentroTemperaturaManana && xpp.getName().equals("minima")) {
-                        dentroMinimaManana = false;
+                    if (xpp.getName().equals("minima")) {
+                        dentroMinima = false;
                     }
                     break;
 
