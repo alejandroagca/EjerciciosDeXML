@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.usuario.myapplication.descargas.RestClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
 import org.xmlpull.v1.XmlPullParser;

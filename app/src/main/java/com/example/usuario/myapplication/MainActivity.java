@@ -44,13 +44,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /*if (v == btnEjercicio3){
             i = new Intent(this, Ejercicio3Activity.class);
             startActivity(i);
-        }
+        }*/
 
 
 
         if (v == btnEjercicio4){
-            i = new Intent(this, Ejercicio4Activity.class);
+            i = new Intent(this, NoticiasRSSActivity.class);
             startActivity(i);
-        }*/
+        }
     }
 }

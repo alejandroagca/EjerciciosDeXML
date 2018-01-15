@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".EmpleadosActivity" />
-        <activity android:name=".AEMETActivity"></activity>
+        <activity android:name=".AEMETActivity" />
+        <activity android:name=".NoticiasRSSActivity"></activity>
     </application>
 
 </manifest>
