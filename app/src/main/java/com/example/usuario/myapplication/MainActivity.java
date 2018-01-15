@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         if (v == btnEjercicio4){
-            i = new Intent(this, NoticiasRSSActivity.class);
+            i = new Intent(this, Noticias2RSSActivity.class);
             startActivity(i);
         }
     }

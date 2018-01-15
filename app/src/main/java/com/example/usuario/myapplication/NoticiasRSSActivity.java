@@ -30,30 +30,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class NoticiasRSSActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class NoticiasRSSActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    public static final String CANAL = "http://www.europapress.es/rss/rss.aspx?ch=279";
-    public static final String TEMPORAL = "europapress.xml";
+    String canal;
+    final static String TEMPORAL = "periodico.xml";
     ListView lista;
     ArrayList<Noticia> listaNoticias;
     ArrayAdapter<Noticia> adapter;
-    FloatingActionButton fab_updateNews;
     ProgressDialog progreso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_noticias_rss);
+        setContentView(R.layout.activity_noticias2_rss);
         lista = (ListView) findViewById(R.id.listView);
         lista.setOnItemClickListener(this);
-        fab_updateNews = (FloatingActionButton) findViewById(R.id.fab_updateNews);
-        fab_updateNews.setOnClickListener(this);
-    }
+        canal = getIntent().getExtras().getString("direccion");
+        descarga(canal, TEMPORAL);
 
-    @Override
-    public void onClick(View v) {
-        if (v == fab_updateNews)
-            descarga(CANAL, TEMPORAL);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

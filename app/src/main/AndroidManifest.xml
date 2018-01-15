@@ -21,7 +21,8 @@
         </activity>
         <activity android:name=".EmpleadosActivity" />
         <activity android:name=".AEMETActivity" />
-        <activity android:name=".NoticiasRSSActivity"></activity>
+        <activity android:name=".NoticiasRSSActivity" />
+        <activity android:name=".Noticias2RSSActivity"></activity>
     </application>
 
 </manifest>
