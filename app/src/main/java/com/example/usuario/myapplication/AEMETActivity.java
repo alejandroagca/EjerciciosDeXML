@@ -87,16 +87,16 @@ public class AEMETActivity extends AppCompatActivity {
         descarga(ENLACE, FICHERO);
     }
     private void escribirTramoHorario(){
-        if (hora >= 0 && hora <6){
+        if (hora < 6){
             txvPrimerTramo.setText("00-06");
         }
-        if (hora >= 6 && hora <12){
+        if (hora < 12){
             txvSegundoTramo.setText("06-12");
         }
-        if (hora >= 12 && hora <18){
+        if (hora < 18){
             txvTercerTramo.setText("12-18");
         }
-        if (hora >= 18 && hora <24){
+        if (hora < 24){
             txvCuartoTramo.setText("18-24");
         }
     }
@@ -207,16 +207,23 @@ public class AEMETActivity extends AppCompatActivity {
                         dentroMinimaHoy = true;
                     }
 
-                    if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("00-06") && hora >= 0 && hora <6){
+                    if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("00-06") && hora < 6){
                         dentroEstadoDiaHoyPrimerTramo = true;
-                    }
-                    if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("06-12") && hora >= 6 && hora <12){
                         dentroEstadoDiaHoySegundoTramo = true;
-                    }
-                    if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("12-18") && hora >= 12 && hora <18){
                         dentroEstadoDiaHoyTercerTramo = true;
+                        dentroEstadoDiaHoyCuartoTramo = true;
                     }
-                    if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("18-24") && hora >= 18 && hora <24){
+                    else if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("06-12") && hora < 12){
+                        dentroEstadoDiaHoySegundoTramo = true;
+                        dentroEstadoDiaHoyTercerTramo = true;
+                        dentroEstadoDiaHoyCuartoTramo = true;
+
+                    }
+                    else if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("12-18") && hora < 18){
+                        dentroEstadoDiaHoyTercerTramo = true;
+                        dentroEstadoDiaHoyCuartoTramo = true;
+                    }
+                    else if (dentroHoy && xpp.getName().equals("estado_cielo") && xpp.getAttributeValue(null, "periodo").equals("18-24") && hora < 24){
                         dentroEstadoDiaHoyCuartoTramo = true;
                     }
 
@@ -266,6 +273,7 @@ public class AEMETActivity extends AppCompatActivity {
                         }
                         if (xpp.getText().equals("12n") || xpp.getText().equals("13n")) {
                             imgPrimerTramoHoy.setImageResource(R.drawable.nublado);
+
                         }
                         if (xpp.getText().equals("17n")) {
                             imgPrimerTramoHoy.setImageResource(R.drawable.nublado);
@@ -380,7 +388,7 @@ public class AEMETActivity extends AppCompatActivity {
                         dentroHoy = false;
                         dentroManana = false;
                     }
-                    if (dentroManana && xpp.getName().equals("estado_cielo")){
+                    if (xpp.getName().equals("estado_cielo")){
                         dentroEstadoDiaHoyPrimerTramo = false;
                         dentroEstadoDiaHoySegundoTramo = false;
                         dentroEstadoDiaHoyTercerTramo = false;
